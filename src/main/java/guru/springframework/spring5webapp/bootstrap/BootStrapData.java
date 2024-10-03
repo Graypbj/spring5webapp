@@ -9,6 +9,8 @@ import guru.springframework.spring5webapp.repositories.PublisherRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLOutput;
+
 @Component
 public class BootStrapData implements CommandLineRunner {
 
@@ -25,28 +27,38 @@ public class BootStrapData implements CommandLineRunner {
     @Override
     public void run(String ... args) throws Exception {
 
+        System.out.println("Started in Bootstrap");
+        Publisher publisher = new Publisher("Penguin", "123 Main Street", "New York City", "New York", "11111");
+
+        publisherRepository.save(publisher);
+
+        System.out.println("Publishers: " + publisher.toString());
+
         Author eric = new Author("Eric", "Evans");
         Book ddd = new Book("Domain Driven Design", "123123");
         eric.getBooks().add(ddd);
         ddd.getAuthors().add(eric);
 
+        ddd.setPublisher(publisher);
+        publisher.getBooks().add(ddd);
+
         authorRepository.save(eric);
         bookRepository.save(ddd);
+        publisherRepository.save(publisher);
 
         Author rod = new Author("Rod", "Johnson");
         Book noEJB = new Book("J2EE Development without EJB", "3939459459");
         rod.getBooks().add(noEJB);
         noEJB.getAuthors().add(rod);
 
+        noEJB.setPublisher(publisher);
+        publisher.getBooks().add(noEJB);
+
         authorRepository.save(rod);
         bookRepository.save(noEJB);
+        publisherRepository.save(publisher);
 
-        Publisher penguin = new Publisher("Penguin", "123 Main Street", "New York City", "New York", "11111");
-
-        publisherRepository.save(penguin);
-
-        System.out.println("Started in Bootstrap");
         System.out.println("Number of books: " + bookRepository.count());
-        System.out.println("Publishers: " + penguin.toString());
+        System.out.println("Publisher Number of Books: " + publisher.getBooks().size());
     }
 }
